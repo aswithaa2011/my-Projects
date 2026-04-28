@@ -12,7 +12,7 @@ import { PRODUCTS } from "../../data/products";
 
 const NavBar = () => {
   const { datas, setDatas } = useContext(AuthContext);
-  const { cartItems, searchTerm, setSearchTerm } = useContext(CardContext);
+  const { cartItems, searchTerm, setSearchTerm, wishlistItems } = useContext(CardContext);
   const navigate = useNavigate();
   const [showSearchList, setShowSearchList] = useState(false);
   const searchRef = useRef(null);
@@ -110,9 +110,14 @@ const NavBar = () => {
             )}
           </div>
 
-          <button className="hidden md:flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-[22px] text-gray-700 transition hover:border-pink-200 hover:bg-pink-50 hover:text-pink-600">
+          <Link to="/wishlist" className="relative hidden md:flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-[22px] text-gray-700 transition hover:border-pink-200 hover:bg-pink-50 hover:text-pink-500">
             <CiHeart />
-          </button>
+            {wishlistItems?.length > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-pink-500 px-1 text-[11px] font-bold text-white shadow-md">
+                {wishlistItems.length}
+              </span>
+            )}
+          </Link>
 
           <Link
             to="/cart"
@@ -126,22 +131,33 @@ const NavBar = () => {
             )}
           </Link>
 
-          <button className="hidden sm:flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-[21px] text-gray-700 transition hover:border-yellow-200 hover:bg-yellow-50 hover:text-yellow-600">
-            <PiSmileyMeltingLight />
-          </button>
+
 
           {datas?.status ? (
-            <div className="flex items-center gap-3 pl-1">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-purple-100 to-violet-200 text-[24px] text-purple-700 shadow-sm ring-1 ring-purple-100">
+            <div className="relative group flex items-center gap-2 pl-1 cursor-pointer">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-purple-100 to-violet-200 text-[24px] text-purple-700 shadow-sm ring-1 ring-purple-100 transition hover:scale-105">
                 <FaUserCircle />
               </div>
 
-              <button
-                onClick={handleLogout}
-                className="rounded-full border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-500 transition hover:bg-red-500 hover:text-white"
-              >
-                Logout
-              </button>
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 top-12 hidden w-48 flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl opacity-0 transition-opacity duration-200 group-hover:flex group-hover:opacity-100">
+                <div className="border-b border-gray-100 bg-gray-50 px-4 py-3">
+                    <p className="text-sm font-semibold text-gray-800">My Account</p>
+                </div>
+                <Link to="/my-orders" className="block px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-purple-50 hover:text-purple-700">
+                    My Orders
+                </Link>
+                <Link to="/wishlist" className="block px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-purple-50 hover:text-purple-700">
+                    My Activities
+                </Link>
+                <div className="border-t border-gray-50"></div>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full px-4 py-3 text-left text-sm font-medium text-red-500 transition hover:bg-red-50"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           ) : (
             <NavLink

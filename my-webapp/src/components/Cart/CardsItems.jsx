@@ -1,9 +1,11 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import CardContext from "./CardContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function CardsItems() {
   const { cartItems, setCartItems } = useContext(CardContext);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const navigate = useNavigate();
 
   const removeItem = (name) => {
     const updatedItems = cartItems.filter((item) => item.name !== name);
@@ -19,6 +21,29 @@ function CardsItems() {
     (total, item) => total + item.quantity,
     0
   );
+
+  const handleCheckout = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setIsProcessing(false);
+      
+      const newOrder = {
+        orderId: "GLO-" + Math.floor(100000 + Math.random() * 900000),
+        date: new Date().toISOString(),
+        items: [...cartItems],
+        totalPrice: totalPrice,
+        totalItems: totalItems,
+        status: "Processing"
+      };
+
+      const existingOrders = JSON.parse(localStorage.getItem("userOrders")) || [];
+      localStorage.setItem("userOrders", JSON.stringify([newOrder, ...existingOrders]));
+
+      alert("🎉 Order Placed Successfully! Thank you for shopping with Glowra.");
+      setCartItems([]);
+      navigate("/my-orders");
+    }, 1500);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-purple-50">
@@ -104,8 +129,12 @@ function CardsItems() {
                 </div>
               </div>
 
-              <button className="mt-6 w-full rounded-full bg-white px-5 py-3 text-sm font-bold text-gray-900 transition hover:bg-purple-100">
-                Buy Now
+              <button 
+                onClick={handleCheckout}
+                disabled={isProcessing}
+                className={`mt-6 w-full rounded-full px-5 py-3 text-sm font-bold transition ${isProcessing ? "bg-gray-400 text-gray-800 cursor-not-allowed" : "bg-white text-gray-900 hover:bg-purple-100 shadow-md hover:shadow-lg"}`}
+              >
+                {isProcessing ? "Adding secure payment..." : "Buy Now"}
               </button>
 
               <Link

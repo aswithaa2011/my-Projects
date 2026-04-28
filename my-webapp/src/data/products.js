@@ -23,6 +23,13 @@ import img22 from "../assets/images/22.webp";
 import img23 from "../assets/images/23.webp";
 import img24 from "../assets/images/24.webp";
 import img25 from "../assets/images/25.webp";
+import img26 from "../assets/images/26.webp";
+import img27 from "../assets/images/27.webp";
+import img28 from "../assets/images/28.webp";
+import img29 from "../assets/images/29.webp";
+import img30 from "../assets/images/30.webp";
+
+
 
 
 
@@ -43,12 +50,17 @@ export const PRODUCTS = [
   { img: img14, name: "Glowra Highlighter", price: 349, offprice: 699, percent: "50% OFF" },
   { img: img15, name: "Glowra Compact Mirror Kit", price: 199, offprice: 399, percent: "50% OFF" },
   { img: img16, name: "Glowra Skincare Combo", price: 799, offprice: 1299, percent: "38% OFF" },
-   { img: img17, name: "Glowra Glow Face Wash", price: 199, offprice: 349, percent: "43% OFF" },
+  { img: img17, name: "Glowra Glow Face Wash", price: 199, offprice: 349, percent: "43% OFF" },
   { img: img18, name: "Glowra Sunscreen SPF 50", price: 399, offprice: 699, percent: "42% OFF" },
   { img: img20, name: "Glowra Eyeliner Pen", price: 179, offprice: 349, percent: "48% OFF" },
   { img: img21, name: "Glowra Lipstick Matte", price: 299, offprice: 599, percent: "50% OFF" },
   { img: img22, name: "Glowra BB Cream", price: 399, offprice: 699, percent: "42% OFF" },
   { img: img23, name: "Glowra Face Mist", price: 249, offprice: 499, percent: "50% OFF" },
   { img: img24, name: "Glowra Highlighter", price: 349, offprice: 699, percent: "50% OFF" },
-    { img: img25, name: "Glowra Highlighter", price: 349, offprice: 699, percent: "50% OFF" }
+  { img: img25, name: "Glowra Liquid Eyeliner", price: 299, offprice: 599, percent: "50% OFF" },
+  { img: img26, name: "Glowra Matte Lipstick", price: 349, offprice: 699, percent: "50% OFF" },
+  { img: img27, name: "Glowra Eyeshadow Palette", price: 549, offprice: 999, percent: "45% OFF" },
+  { img: img28, name: "Glowra Setting Spray", price: 299, offprice: 599, percent: "50% OFF" },
+  { img: img29, name: "Glowra Concealer Wand", price: 349, offprice: 699, percent: "50% OFF" },
+  { img: img30, name: "Glowra Lip Gloss", price: 199, offprice: 399, percent: "50% OFF" }
 ];

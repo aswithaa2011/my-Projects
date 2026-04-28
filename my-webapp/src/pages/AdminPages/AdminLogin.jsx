@@ -26,7 +26,7 @@ const AdminLogin = () => {
       savedAdmin.password === formData.password
     ) {
       alert("Admin Login Successful");
-      navigate("/cart");
+      navigate("/admin/dashboard");
     } else {
       alert("Invalid admin credentials");
     }
@@ -65,6 +65,10 @@ const AdminLogin = () => {
           </button>
 
           <p className="text-sm text-gray-600 mt-4">
+            <a href="/admin/register" className="text-[#8E1C9D] font-medium hover:underline">
+              Register an Admin
+            </a>
+            <span className="mx-2 text-gray-300">|</span>
             <a href="/login" className="text-[#8E1C9D] font-medium hover:underline">
               Back to User Login
             </a>

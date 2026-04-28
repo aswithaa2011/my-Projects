@@ -1,5 +1,6 @@
 // src/components/Cart/Cards.jsx
 import { CiHeart } from "react-icons/ci";
+import { FaHeart } from "react-icons/fa";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import CardContext from "./CardContext";
@@ -7,7 +8,7 @@ import AuthContext from "../Authentication/AuthContext";
 import { PRODUCTS } from "../../data/products";
 
 const Cards = () => {
-  const { addToCart, searchTerm } = useContext(CardContext);
+  const { addToCart, searchTerm, wishlistItems = [], toggleWishlist } = useContext(CardContext);
   const { datas } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -49,7 +50,8 @@ const Cards = () => {
               <div className="relative overflow-hidden">
                 <img
                   src={e.img}
-                  className="h-64 w-full object-cover transition duration-500 group-hover:scale-105"
+                  onClick={() => navigate(`/product/${encodeURIComponent(e.name)}`)}
+                  className="h-64 w-full cursor-pointer object-cover transition duration-500 group-hover:scale-105"
                   alt={e.name}
                 />
                 <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-green-700 shadow">
@@ -75,8 +77,15 @@ const Cards = () => {
                     Add to Cart
                   </button>
 
-                  <button className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 text-xl text-gray-600 transition hover:border-red-200 hover:text-red-500">
-                    <CiHeart />
+                  <button 
+                    onClick={() => toggleWishlist(e)}
+                    className={`flex h-11 w-11 items-center justify-center rounded-full border transition ${
+                      wishlistItems.some((item) => item.name === e.name)
+                        ? "border-pink-500 bg-pink-50 text-pink-500 text-xl"
+                        : "border-gray-200 bg-white text-gray-600 text-[21px] hover:border-pink-200 hover:bg-pink-50 hover:text-pink-500"
+                    }`}
+                  >
+                    {wishlistItems.some((item) => item.name === e.name) ? <FaHeart /> : <CiHeart />}
                   </button>
                 </div>
               </div>

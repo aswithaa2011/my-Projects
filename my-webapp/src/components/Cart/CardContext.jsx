@@ -8,11 +8,19 @@ export const CardProvider = ({ children }) => {
     const savedCart = localStorage.getItem("cartItems");
     return savedCart ? JSON.parse(savedCart) : [];
   });
+  const [wishlistItems, setWishlistItems] = useState(() => {
+    const savedWishlist = localStorage.getItem("wishlistItems");
+    return savedWishlist ? JSON.parse(savedWishlist) : [];
+  });
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
+
+  useEffect(() => {
+    localStorage.setItem("wishlistItems", JSON.stringify(wishlistItems));
+  }, [wishlistItems]);
 
   const addToCart = (product) => {
     setCartItems((prev) => {
@@ -30,9 +38,24 @@ export const CardProvider = ({ children }) => {
     });
   };
 
+  const toggleWishlist = (product) => {
+    setWishlistItems((prev) => {
+      const exists = prev.find((item) => item.name === product.name);
+      if (exists) {
+        return prev.filter((item) => item.name !== product.name);
+      } else {
+        return [...prev, product];
+      }
+    });
+  };
+
   return (
     <CardContext.Provider
-      value={{ cartItems, setCartItems, addToCart, searchTerm, setSearchTerm }}
+      value={{ 
+        cartItems, setCartItems, addToCart, 
+        searchTerm, setSearchTerm, 
+        wishlistItems, toggleWishlist 
+      }}
     >
       {children}
     </CardContext.Provider>
