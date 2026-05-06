@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-sidebar: #190f2b;
+  --color-brand-sidebar-hover: #261940;
+  --color-brand-active: #2a1a45;
+  --color-brand-bg: #fffbf7;
+  --color-brand-pink: #ff6b9e;
+  
+  --color-card-mint-bg: #e6fffa;
+  --color-card-mint-text: #059669;
+  --color-card-peach-bg: #fff3e6;
+  --color-card-peach-text: #d97706;
+  --color-card-purple-bg: #f3e8ff;
+  --color-card-purple-text: #7e22ce;
+  
+  --color-status-done: #10b981;
+  --color-status-active: #fbbf24;
+  --color-status-todo: #ddd6fe;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: var(--color-brand-bg);
+  color: #1f2937;
+}

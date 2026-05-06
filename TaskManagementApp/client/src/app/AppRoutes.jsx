@@ -1,10 +1,11 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import RootLayout from "../layouts/RootLayout";
+import DashboardLayout from "../layouts/DashboardLayout";
 import HomePage from "../pages/HomePage";
 import TasksPage from "../pages/TasksPage";
 import LabsPage from "../pages/LabsPage";
 import NotFoundPage from "../pages/NotFoundPage";
+import DayPage from "../pages/DayPage";
 
 // Existing lab pages (kept, but routed under /labs/*)
 import Day10Task1 from "../pages/Day10/Task1";
@@ -35,8 +36,9 @@ import Day20ChangeText from "../pages/Day20/ChangeText";
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route element={<RootLayout />}>
+      <Route element={<DashboardLayout />}>
         <Route index element={<HomePage />} />
+        <Route path="day/:id" element={<DayPage />} />
         <Route path="tasks" element={<TasksPage />} />
         <Route path="labs" element={<LabsPage />} />
 
