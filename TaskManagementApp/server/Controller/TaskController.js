@@ -60,9 +60,9 @@ export default ${safeName}Board;
       // We run the 'code' command on the generated folder path.
       exec(`code "${projectFolderPath}"`, (error) => {
         if (error) {
-          console.error(\`Failed to open VS Code: \${error.message}\`);
+          console.error(`Failed to open VS Code: ${error.message}`);
         } else {
-          console.log(\`Successfully opened VS Code for \${projectFolderPath}\`);
+          console.log(`Successfully opened VS Code for ${projectFolderPath}`);
         }
       });
     }
@@ -162,7 +162,27 @@ export const getTasks = async (req, res) => {
   try {
     // Sort by oldest first so Day 1 comes before Day 2
     const tasks = await Task.find().sort({ createdAt: 1 });
-    res.status(200).json({ success: true, tasks });
+    
+    // For each task, scan its folder for sub-tasks (files)
+    const tasksWithFiles = tasks.map(task => {
+      let files = [];
+      if (task.projectPath && fs.existsSync(task.projectPath)) {
+        files = fs.readdirSync(task.projectPath)
+          .filter(f => f.endsWith('.jsx') && f.toLowerCase() !== 'index.jsx')
+          .map(f => ({
+            name: f.replace('.jsx', ''),
+            fileName: f,
+            // Construct a path that matches AppRoutes.jsx structure
+            // e.g. labs/day1/task1
+            routePath: `/labs/${task.folder.toLowerCase()}/${f.replace('.jsx', '').toLowerCase()}`
+          }));
+      }
+      
+      const taskObj = task.toObject();
+      return { ...taskObj, files };
+    });
+
+    res.status(200).json({ success: true, tasks: tasksWithFiles });
   } catch (error) {
     console.error("Error fetching tasks:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -202,6 +222,28 @@ export const deleteTask = async (req, res) => {
     res.status(200).json({ success: true, message: "Task deleted successfully" });
   } catch (error) {
     console.error("Error deleting task:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const openFolder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const task = await Task.findById(id);
+    
+    if (!task || !task.projectPath) {
+      return res.status(404).json({ success: false, message: "Task or project path not found" });
+    }
+
+    exec(`code "${task.projectPath}"`, (error) => {
+      if (error) {
+         console.error(`Failed to open VS Code: ${error.message}`);
+         return res.status(500).json({ success: false, message: "Failed to open VS Code" });
+      }
+      res.status(200).json({ success: true, message: "VS Code opened" });
+    });
+  } catch (error) {
+    console.error("Error opening folder:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };

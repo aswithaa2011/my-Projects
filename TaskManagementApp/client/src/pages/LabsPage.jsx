@@ -3,61 +3,61 @@ import { FiArrowRight } from "react-icons/fi";
 
 const LABS = [
   {
-    day: "Day 10",
+    day: "Day 1",
     items: [
-      { label: "Task 1", to: "/labs/day10/task1" },
-      { label: "Task 2", to: "/labs/day10/task2" },
+      { label: "Task 1", to: "/labs/day1/task1" },
+      { label: "Task 2", to: "/labs/day1/task2" },
     ],
+  },
+  {
+    day: "Day 2",
+    items: [
+      { label: "Timer", to: "/labs/day2/timer" },
+      { label: "Recipes", to: "/labs/day2/recipes" },
+      { label: "Todo", to: "/labs/day2/todo" },
+    ],
+  },
+  {
+    day: "Day 4",
+    items: [
+      { label: "Counter", to: "/labs/day4/counter" },
+      { label: "Form", to: "/labs/day4/form" },
+    ],
+  },
+  {
+    day: "Day 6 (useRef)",
+    items: [
+      { label: "Feedback Form", to: "/labs/day6/feedback" },
+      { label: "Search Form", to: "/labs/day6/search" },
+    ],
+  },
+  {
+    day: "Day 7",
+    items: [
+      { label: "Login Form", to: "/labs/day7/login-form" },
+      { label: "Login/Register", to: "/labs/day7/login-register" },
+      { label: "Alert (HOC)", to: "/labs/day7/alert" },
+    ],
+  },
+  {
+    day: "Day 8 (useMemo)",
+    items: [
+      { label: "Sum", to: "/labs/day8/sum" },
+      { label: "Sorting", to: "/labs/day8/sorting" },
+      { label: "Filter Name", to: "/labs/day8/filter-name" },
+    ],
+  },
+  {
+    day: "Day 9 (Custom hooks)",
+    items: [{ label: "Hooks", to: "/labs/day9/hooks" }],
+  },
+  {
+    day: "Day 10",
+    items: [{ label: "CRUD", to: "/labs/day10/crud" }],
   },
   {
     day: "Day 11",
-    items: [
-      { label: "Timer", to: "/labs/day11/timer" },
-      { label: "Recipes", to: "/labs/day11/recipes" },
-      { label: "Todo", to: "/labs/day11/todo" },
-    ],
-  },
-  {
-    day: "Day 13",
-    items: [
-      { label: "Counter", to: "/labs/day13/counter" },
-      { label: "Form", to: "/labs/day13/form" },
-    ],
-  },
-  {
-    day: "Day 15 (useRef)",
-    items: [
-      { label: "Feedback Form", to: "/labs/day15/feedback" },
-      { label: "Search Form", to: "/labs/day15/search" },
-    ],
-  },
-  {
-    day: "Day 16",
-    items: [
-      { label: "Login Form", to: "/labs/day16/login-form" },
-      { label: "Login/Register", to: "/labs/day16/login-register" },
-      { label: "Alert (HOC)", to: "/labs/day16/alert" },
-    ],
-  },
-  {
-    day: "Day 17 (useMemo)",
-    items: [
-      { label: "Sum", to: "/labs/day17/sum" },
-      { label: "Sorting", to: "/labs/day17/sorting" },
-      { label: "Filter Name", to: "/labs/day17/filter-name" },
-    ],
-  },
-  {
-    day: "Day 18 (Custom hooks)",
-    items: [{ label: "Hooks", to: "/labs/day18/hooks" }],
-  },
-  {
-    day: "Day 19",
-    items: [{ label: "CRUD", to: "/labs/day19/crud" }],
-  },
-  {
-    day: "Day 20",
-    items: [{ label: "Text Change", to: "/labs/day20/text-change" }],
+    items: [{ label: "Text Change", to: "/labs/day11/text-change" }],
   },
 ];
 
@@ -86,7 +86,7 @@ export default function LabsPage() {
       <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
         <div className="text-sm font-semibold text-indigo-600">Labs</div>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">
-          Practice pages (Day10–Day20)
+          Practice pages (Day1–Day11)
         </h1>
         <p className="mt-2 max-w-2xl text-slate-600">
           These are your learning tasks. They’re now grouped under{" "}

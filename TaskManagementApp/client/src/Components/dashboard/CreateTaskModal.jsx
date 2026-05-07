@@ -16,7 +16,7 @@ export default function CreateTaskModal({ isOpen, onClose, onCreated }) {
     setError(null);
     
     try {
-      const res = await fetch('http://localhost:3000/api/tasks', {
+      const res = await fetch('http://localhost:5000/api/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, status: 'todo' })
@@ -63,7 +63,7 @@ export default function CreateTaskModal({ isOpen, onClose, onCreated }) {
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="e.g. Day 18"
+              placeholder="e.g. Day 9"
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 focus:border-brand-pink focus:ring-4 focus:ring-brand-pink/10 rounded-xl outline-none transition-all font-medium text-slate-900"
               disabled={loading}
             />
