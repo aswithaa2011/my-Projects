@@ -63,13 +63,6 @@ export default function DayPage() {
     }
   };
 
-  const openInVSCode = async () => {
-    try {
-      await fetch(`http://localhost:5000/api/tasks/${id}/open`, { method: 'POST' });
-    } catch (error) {
-      console.error("Failed to open VS Code", error);
-    }
-  };
 
   if (loading) {
     return <div className="text-center py-20 animate-pulse text-slate-500 font-bold">Loading Workspace...</div>;
@@ -94,12 +87,6 @@ export default function DayPage() {
         </Link>
         <div className="flex gap-4">
           <button 
-            onClick={openInVSCode}
-            className="inline-flex items-center gap-2 text-sm font-medium text-brand-pink hover:text-brand-pink/80 transition-colors"
-          >
-            <FiCode /> Open in VS Code
-          </button>
-          <button 
             onClick={deleteTask}
             className="inline-flex items-center gap-2 text-sm font-medium text-red-500 hover:text-red-700 transition-colors"
           >
@@ -113,9 +100,6 @@ export default function DayPage() {
           <h1 className="text-4xl font-black text-slate-900 tracking-tight">
             {task.name}
           </h1>
-          <p className="text-slate-500 mt-2 flex items-center gap-2">
-            <FiCode /> Folder: <span className="font-mono text-xs bg-slate-100 p-1 rounded">{task.folder}</span>
-          </p>
         </div>
         <div className="text-right">
           <div className={`text-xl font-bold capitalize ${
@@ -128,25 +112,6 @@ export default function DayPage() {
         </div>
       </div>
 
-      {/* Task Buttons Section */}
-      {task.files && task.files.length > 0 && (
-        <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
-          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <FiCode className="text-indigo-600" /> Practice Tasks
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {task.files.map((file) => (
-              <Link
-                key={file.name}
-                to={file.routePath}
-                className="flex items-center justify-center p-4 rounded-xl font-semibold bg-slate-50 text-slate-700 hover:bg-brand-bg hover:text-brand-pink transition-all border border-slate-100 shadow-sm"
-              >
-                {file.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
@@ -178,19 +143,13 @@ export default function DayPage() {
 
         <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
           <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <FiCode className="text-indigo-600" /> Workspace Tips
+            <FiCheckCircle className="text-indigo-600" /> Task Info
           </h3>
-          <p className="text-slate-600 mb-4 leading-relaxed">
-            Folder: <strong>{task.folder}</strong>
-          </p>
           <p className="text-slate-600 mb-4 leading-relaxed text-sm">
-            1. Open VS Code to start coding.
-          </p>
-          <p className="text-slate-600 mb-4 leading-relaxed text-sm">
-            2. Import your component in <code>AppRoutes.jsx</code>.
+            Keep track of your daily tasks here. Update their status as you progress.
           </p>
           <p className="text-slate-600 leading-relaxed text-sm italic border-l-4 border-indigo-100 pl-4">
-            "Your workspace is ready. Every line of code brings you closer to mastery."
+            "Your workspace is ready. Every task completed brings you closer to your goals."
           </p>
         </div>
       </div>

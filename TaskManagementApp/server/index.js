@@ -1,30 +1,53 @@
-import express from "express" 
-import cors from "cors"
-import dotenv from "dotenv"
-import connectDb from "./config/db.js"
-import loginRoute from "./Routes/loginRoute.js"
-import taskRoute from "./Routes/TaskRoute.js"
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import connectDb from "./config/db.js";
 
+// ── Routes ──────────────────────────────────────────────────
+import loginRoute from "./Routes/loginRoute.js";
+import taskRoute from "./Routes/TaskRoute.js";        // legacy routes (kept for existing tasks/projects)
+import authRoute from "./Routes/authRoute.js";         // new auth routes
+import workspaceRoute from "./Routes/workspaceRoute.js";
+import dayRoute from "./Routes/dayRoute.js";
+import taskRouteV2 from "./Routes/taskRouteV2.js";
 
-dotenv.config()
+// ── Error handler ────────────────────────────────────────────
+import errorHandler from "./middleware/errorHandler.js";
 
-const app=express()
+dotenv.config();
+connectDb();
 
-connectDb()
+const app = express();
 
-app.use(cors())
-app.use(express.json())
-app.use("/api", taskRoute)
+// ── Middleware ───────────────────────────────────────────────
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://localhost:5174"],
+    credentials: true,
+  })
+);
+app.use(express.json());
 
-const port =process.env.PORT || 3000
+// ── API Routes ───────────────────────────────────────────────
+app.use("/api", taskRoute);            // legacy: /api/tasks, /api/projects
+app.use("/api/auth", authRoute);       // new: /api/auth/signup, /api/auth/login, /api/auth/me
+app.use("/api/workspaces", workspaceRoute);
+app.use("/api/days", dayRoute);
+app.use("/api/v2/tasks", taskRouteV2); // new task routes at /api/v2/tasks/*
 
+// ── Health check ─────────────────────────────────────────────
+app.get("/api/health", (req, res) =>
+  res.json({ success: true, message: "mytask-webapp API is running 🚀" })
+);
 
-app.listen(port,()=>{
+// ── Global error handler ─────────────────────────────────────
+app.use(errorHandler);
 
-
-    console.log(`server connected http://localhost:${port}` );
-
-
-    
-})
-
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`\n🚀 Server running on http://localhost:${port}`);
+  console.log(`   Auth API    → http://localhost:${port}/api/auth`);
+  console.log(`   Workspaces  → http://localhost:${port}/api/workspaces`);
+  console.log(`   Days        → http://localhost:${port}/api/days`);
+  console.log(`   Tasks (v2)  → http://localhost:${port}/api/v2/tasks`);
+});

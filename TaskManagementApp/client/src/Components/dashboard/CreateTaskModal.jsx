@@ -68,7 +68,7 @@ export default function CreateTaskModal({ isOpen, onClose, onCreated }) {
               disabled={loading}
             />
             <p className="text-xs text-slate-400 mt-2">
-              This will automatically generate a folder in your React project and open VS Code.
+              This will create a new workspace to track your tasks.
             </p>
           </div>
           
@@ -89,7 +89,7 @@ export default function CreateTaskModal({ isOpen, onClose, onCreated }) {
               {loading ? (
                 <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
               ) : (
-                'Create & Open in VS Code'
+                'Create Workspace'
               )}
             </button>
           </div>

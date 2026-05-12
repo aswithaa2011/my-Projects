@@ -9,11 +9,6 @@ export default function DayCard({ task }) {
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
-  const openInVSCode = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    fetch(`http://localhost:5000/api/tasks/${_id}/open`, { method: 'POST' });
-  };
 
   return (
     <div className="bg-white rounded-3xl p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col relative overflow-hidden">
@@ -29,14 +24,6 @@ export default function DayCard({ task }) {
         </Link>
 
         <div className="flex items-center gap-2">
-          {/* Open in VS Code */}
-          <button
-            onClick={openInVSCode}
-            className="p-2 rounded-xl bg-slate-50 text-slate-400 hover:bg-brand-bg hover:text-brand-pink transition-all"
-            title="Open in VS Code"
-          >
-            <FiCode className="w-4 h-4" />
-          </button>
 
           {/* Progress Ring */}
           <div className="relative w-12 h-12 flex items-center justify-center">
@@ -87,7 +74,7 @@ export default function DayCard({ task }) {
         </div>
       ) : (
         <Link to={`/day/${_id}`} className="text-xs text-slate-400 z-10 mb-4 hover:text-brand-pink transition-colors">
-          Click to open workspace →
+          Click to view day →
         </Link>
       )}
 

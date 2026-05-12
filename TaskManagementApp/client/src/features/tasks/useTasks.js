@@ -1,131 +1,111 @@
-import { useMemo } from "react";
-import { useLocalStorageState } from "../../shared/hooks/useLocalStorageState";
-import { isSameDay, makeId, parseDateInput } from "./utils";
-
-const STORAGE_KEY = "tm.tasks.v1";
-
-function safeArray(value) {
-  return Array.isArray(value) ? value : [];
-}
-
-function normalizeTask(input) {
-  const now = Date.now();
-  return {
-    id: input.id ?? makeId(),
-    title: String(input.title ?? "").trim(),
-    notes: String(input.notes ?? "").trim(),
-    tags: Array.isArray(input.tags)
-      ? input.tags
-          .map((t) => String(t).trim())
-          .filter(Boolean)
-          .slice(0, 12)
-      : [],
-    priority: input.priority ?? "medium", // low | medium | high
-    status: input.status ?? "open", // open | done
-    dueDate: input.dueDate ?? null, // YYYY-MM-DD | null
-    createdAt: input.createdAt ?? now,
-    updatedAt: input.updatedAt ?? now,
-  };
-}
-
-function sortTasks(a, b) {
-  // open first, then due date (nearest), then updated desc
-  if (a.status !== b.status) return a.status === "open" ? -1 : 1;
-
-  const ad = a.dueDate ? parseDateInput(a.dueDate) : null;
-  const bd = b.dueDate ? parseDateInput(b.dueDate) : null;
-  if (ad && bd) return ad.getTime() - bd.getTime();
-  if (ad && !bd) return -1;
-  if (!ad && bd) return 1;
-
-  return (b.updatedAt ?? 0) - (a.updatedAt ?? 0);
-}
+// Refactored useTasks hook to integrate with backend API
+import { useState, useEffect, useCallback, useMemo } from "react";
+import * as api from "./api";
 
 export function useTasks() {
-  const [tasks, setTasks] = useLocalStorageState(STORAGE_KEY, []);
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const normalized = useMemo(
-    () => (Array.isArray(tasks) ? tasks.map(normalizeTask).sort(sortTasks) : []),
-    [tasks],
-  );
+  // Load tasks on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await api.fetchTasks();
+        setTasks(data.tasks || []);
+      } catch (e) {
+        console.error("Failed to fetch tasks", e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
-  const actions = useMemo(() => {
-    return {
-      addTask: (draft) => {
-        const t = normalizeTask({
-          title: draft.title,
-          notes: draft.notes,
-          tags: draft.tags,
-          priority: draft.priority,
-          dueDate: draft.dueDate || null,
-          status: "open",
-        });
-        setTasks((prev) => [t, ...(Array.isArray(prev) ? prev : [])]);
-        return t;
-      },
-      updateTask: (id, patch) => {
-        const now = Date.now();
-        setTasks((prev) =>
-          (Array.isArray(prev) ? prev : []).map((t) =>
-            t.id === id ? normalizeTask({ ...t, ...patch, updatedAt: now }) : t,
-          ),
-        );
-      },
-      removeTask: (id) => {
-        setTasks((prev) => (Array.isArray(prev) ? prev : []).filter((t) => t.id !== id));
-      },
-      toggleDone: (id) => {
-        const now = Date.now();
-        setTasks((prev) =>
-          (Array.isArray(prev) ? prev : []).map((t) => {
-            if (t.id !== id) return t;
-            const next = t.status === "done" ? "open" : "done";
-            return normalizeTask({ ...t, status: next, updatedAt: now });
-          }),
-        );
-      },
-      clearCompleted: () => {
-        setTasks((prev) => (Array.isArray(prev) ? prev : []).filter((t) => t.status !== "done"));
-      },
-      exportTasks: () => {
-        const data = {
-          version: 1,
-          exportedAt: new Date().toISOString(),
-          tasks: safeArray(tasks),
-        };
-        return JSON.stringify(data, null, 2);
-      },
-      importTasks: (raw, { mode } = { mode: "merge" }) => {
-        const parsed = JSON.parse(raw);
-        const incoming = safeArray(parsed?.tasks).map(normalizeTask);
-        setTasks((prev) => {
-          const current = safeArray(prev).map(normalizeTask);
-          if (mode === "replace") return incoming;
+  const normalized = useMemo(() => {
+    // Assuming backend already returns normalized tasks
+    return tasks;
+  }, [tasks]);
 
-          // merge (by id) - incoming wins
-          const byId = new Map(current.map((t) => [t.id, t]));
-          for (const t of incoming) byId.set(t.id, t);
-          return Array.from(byId.values());
-        });
-      },
+  const addTask = useCallback(async (draft) => {
+    const created = await api.createTask(draft);
+    setTasks((prev) => [created, ...prev]);
+    return created;
+  }, []);
+
+  const updateTask = useCallback(async (id, patch) => {
+    const updated = await api.updateTask(id, patch);
+    setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
+  }, []);
+
+  const removeTask = useCallback(async (id) => {
+    await api.deleteTask(id);
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+
+  const toggleDone = useCallback(async (id) => {
+    const task = tasks.find((t) => t.id === id);
+    if (!task) return;
+    const newStatus = task.status === "done" ? "open" : "done";
+    await updateTask(id, { status: newStatus });
+  }, [tasks, updateTask]);
+
+  const clearCompleted = useCallback(async () => {
+    const completedIds = tasks.filter((t) => t.status === "done").map((t) => t.id);
+    await Promise.all(completedIds.map((id) => api.deleteTask(id)));
+    setTasks((prev) => prev.filter((t) => t.status !== "done"));
+  }, []);
+
+  const exportTasks = useCallback(() => {
+    const data = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      tasks: tasks,
     };
-  }, [setTasks, tasks]);
+    return JSON.stringify(data, null, 2);
+  }, [tasks]);
+
+  const importTasks = useCallback((raw, { mode } = { mode: "merge" }) => {
+    const parsed = JSON.parse(raw);
+    const incoming = parsed?.tasks || [];
+    setTasks((prev) => {
+      if (mode === "replace") return incoming;
+      const ids = new Set(prev.map((t) => t.id));
+      const merged = [...prev];
+      incoming.forEach((t) => {
+        if (ids.has(t.id)) {
+          // replace existing
+          const idx = merged.findIndex((x) => x.id === t.id);
+          if (idx >= 0) merged[idx] = t;
+        } else {
+          merged.push(t);
+        }
+      });
+      return merged;
+    });
+  }, []);
 
   const stats = useMemo(() => {
-    const total = normalized.length;
-    const open = normalized.filter((t) => t.status === "open").length;
-    const done = normalized.filter((t) => t.status === "done").length;
+    const total = tasks.length;
+    const open = tasks.filter((t) => t.status === "open").length;
+    const done = tasks.filter((t) => t.status === "done").length;
     const today = new Date();
-    const dueToday = normalized.filter((t) => {
+    const dueToday = tasks.filter((t) => {
       if (!t.dueDate || t.status !== "open") return false;
-      const d = parseDateInput(t.dueDate);
-      if (!d) return false;
-      return isSameDay(d, today);
+      const d = new Date(t.dueDate);
+      return d.toDateString() === today.toDateString();
     }).length;
-
     return { total, open, done, dueToday };
-  }, [normalized]);
+  }, [tasks]);
 
-  return { tasks: normalized, stats, ...actions };
+  return {
+    tasks: normalized,
+    loading,
+    stats,
+    addTask,
+    updateTask,
+    removeTask,
+    toggleDone,
+    clearCompleted,
+    exportTasks,
+    importTasks,
+  };
 }
-
